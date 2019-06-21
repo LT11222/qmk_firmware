@@ -21,30 +21,26 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 void matrix_init_user(void) {
-  rgblight_mode(RGB_MATRIX_SOLID_COLOR);
+  rgblight_mode(RGB_MATRIX_NONE);
 }
 
 void rgb_matrix_indicators_user(void) {
-  rgb_matrix_set_color(0, 255, 0, 0);
-  rgb_matrix_set_color(1, 0, 255, 0);
-  rgb_matrix_set_color(2, 255, 0, 255);
-  rgb_matrix_set_color(3, 255, 255, 255);
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch(keycode) {
     case DOWN:
       if (record->event.pressed) {
-        
+        rgb_matrix_set_color(3, 0, 0, 0);
         if (layer > 0) {
           if (layer == 1) {
             layer -= 1;
-            layer_off(1);
+            layer_state = 0;
             return true;
           }
           else {
             layer -= 1;
-            layer_move(layer);
+            layer_state = (1UL << layer);
             return true;
           }
         }
@@ -53,9 +49,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     
     case UP:
       if (record->event.pressed) {
+        rgb_matrix_set_color(3, 255, 255, 255);
         if (layer < 1) {
           layer += 1;
-          layer_move(layer);
+          layer_state = (1UL << layer);
           return true;
         }
       }
